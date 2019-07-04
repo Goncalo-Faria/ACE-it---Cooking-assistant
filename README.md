@@ -25,7 +25,7 @@ In the `ACE-it/ACE-it/wwwroot/lib` folder:
 * `unzip SpeechSDK-JavaScript-1.5.0.zip`
 
 
-Contributing
+#Contributing
 
 [Gonçalo Faria](https://github.com/Goncalo-Faria)
 
