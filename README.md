@@ -23,3 +23,14 @@ In the `ACE-it/ACE-it/wwwroot/lib` folder:
 
 * `wget https://csspeechstorage.blob.core.windows.net/drop/1.5.0/SpeechSDK-JavaScript-1.5.0.zip`
 * `unzip SpeechSDK-JavaScript-1.5.0.zip`
+
+
+Contributing
+
+[Gonçalo Faria](https://github.com/Goncalo-Faria)
+
+[Catarina Machado](https://github.com/catarinamachado)
+
+[João Vilaça](https://github.com/machadovilaca)
+
+[Pedro Mendes](https://github.com/Mendess2526)
