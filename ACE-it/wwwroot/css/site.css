@@ -1,0 +1,49 @@
+﻿.mapouter {
+  position: relative;
+  text-align: right;
+  height: 500px;
+  width: 1080px;
+  margin: auto;
+}
+
+.gmap_canvas {
+  overflow: hidden;
+  background: none !important;
+  height: 500px;
+  width: 1080px;
+}
+
+.recipe-header {
+  display: flex;
+}
+
+@media (max-width:1000px) {
+  .recipe-header {
+    display: block;
+  }
+}
+
+.recipe-instructions li {
+  font-size: 18px;
+  margin-bottom: 5px;
+}
+
+.table-centered {
+  width: 80%;
+  margin: 0 auto;
+}
+
+.rounded {
+  border-radius: 1rem;
+}
+
+.instruction span {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.instruction span:hover {
+  color: #0056b3;
+  text-decoration: underline;
+  cursor: pointer;
+}

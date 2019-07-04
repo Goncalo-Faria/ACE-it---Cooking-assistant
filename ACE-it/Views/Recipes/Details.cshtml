@@ -1,0 +1,182 @@
+@model ACE_it.Helper.RecipeDetailsViewModel
+
+@{
+    ViewData["Title"] = Model.Recipe.Name;
+
+    var duration = Model.Recipe.DefaultDuration / 60 + " min";
+
+    int likes = 0, loves = 0, dislikes = 0;
+    Model.Recipe.UserReactedToRecipes.ForEach(ucr =>
+    {
+        switch (ucr.Reaction)
+        {
+            case Reaction.Like:
+                likes++;
+                break;
+            case Reaction.Love:
+                loves++;
+                break;
+            case Reaction.Dislike:
+                dislikes++;
+                break;
+        }
+    });
+}
+
+
+@section Stylesheets
+{
+    <link rel="stylesheet" href="/css/Comments.css">
+}
+
+<div class="map-clean">
+    <div class="container recipe-header mt-5">
+        <div class="intro" style="margin-bottom: 0;">
+            <h2 class="text-center" style="margin-bottom: 20px;">@Model.Recipe.Name</h2>
+            <p class="text-center" style="margin: 0;">
+                @Model.Recipe.Description<br/>
+            </p>
+        </div>
+        <div class="row mt-5">
+            <div class="col-md-10 offset-md-1">
+                <div class="intro">
+                    <img class="img-fluid" src="@Model.Recipe.Base64Image" alt="image">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="article-dual-column">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-10 col-lg-3 offset-md-1" style="margin-bottom: 40px;">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th style="font-weight: normal;"><i class="fa fa-heart"></i>&nbsp;@loves</th>
+                            <th style="font-weight: normal;"><i class="fa fa-thumbs-up"></i>&nbsp;@likes</th>
+                            <th style="font-weight: normal;">&nbsp;<i class="fa fa-thumbs-down"></i>&nbsp;@dislikes</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td><i class="fa fa-clock-o"></i>&nbsp;@duration</td>
+                            <td><i class="fa fa-sliders"></i>&nbsp;@Model.Recipe.Difficulty</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="toc">
+                    <p>INGREDIENTS</p>
+                    <ul class="mb-3">
+                        @foreach (var item in Model.Recipe.RecipeIngredients)
+                        {
+                            <li>
+                                <a href="/Ingredients?SearchString=@item.Ingredient.Name">
+                                    <strong>@item.Quantity @item.Ingredient.Unit</strong> of @item.Ingredient.Name<br/>
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </div><a asp-controller="Ingredients" asp-action="Index" class="btn btn-outline-success btn-block" type="button" style="margin-top: 10px;">Find where to buy</a>
+            </div>
+            <div class="col-md-10 col-lg-7 offset-md-1 offset-lg-0">
+                <div class="text">
+                    <p>OVERVIEW</p>
+                    <ul class="recipe-instructions">
+                        @foreach (var item in Model.Recipe.RecipeInstructions)
+                        {
+                            @Html.Raw(item.Instruction.Text)
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                @if (Model.Redirect.HasValue)
+                {
+                    <a asp-action="Create" asp-controller="SessionRecipe" asp-route-recipeId="@Model.Recipe.Id" asp-route-redirect="true"
+                       class="btn btn-primary btn-block btn-lg" style="background-color: rgb(60, 175, 87); margin-top: 20px;" type="submit">
+                        Start
+                    </a>
+                }
+                else if (Model.SessionId.HasValue)
+                {
+                    <a asp-action="Show" asp-controller="SessionRecipe" asp-route-sessionId="@Model.SessionId.Value" class="btn btn-primary btn-block btn-lg" style="background-color: rgb(60, 175, 87); margin-top: 20px;" type="submit">Resume</a>
+                }
+                else
+                {
+                    <a asp-action="Create" asp-controller="SessionRecipe" asp-route-recipeId="@Model.Recipe.Id" class="btn btn-primary btn-block btn-lg" style="background-color: rgb(60, 175, 87); margin-top: 20px;" type="submit">Start</a>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@{var counter = 1;}
+
+@if(@Model.Difficulties.Count > 0)
+{
+    <br/><br/><br/>
+
+    <div class="container">
+        <h4 align="left" style="margin-bottom: 20px;">Your difficulties:</h4><br/>
+        <div class="row">
+            <div class="col-8">
+                @foreach (var item in @Model.Difficulties)
+                {
+                    if (item != "")
+                    {
+                        <div class="card card-white post">
+                            <div class="post-description">
+                                <p><b>@counter. </b>@item</p>
+                            </div>
+                        </div>
+                        counter ++;
+                    }
+                }
+            </div>
+        </div>
+    </div>
+}
+
+<br/><br/><br/>
+
+<div class="container">
+    <h4 align="left" style="margin-bottom: 20px;">@Model.Comments.Count comments:</h4><br/>
+    <div class="row">
+        <div class="col-8">
+            @foreach (var item in Model.Comments)
+            {
+                <div class="card card-white post">
+                    <div class="post-heading">
+                        <div class="title h5">
+                            <b>@item.UserCompletedRecipe.User.UserName</b> says:
+                        </div>
+                    </div>
+                    <div class="post-description">
+                        <p>@item.Text</p>
+                    </div>
+                </div>
+                <br/>
+            }
+        </div>
+    </div>
+</div>
+
+<div class="social-icons">
+    <a href="https://twitter.com/intent/tweet?text=I loved the recipe: @Model.Recipe.Name. Try it now at @Context.Request.Host@Context.Request.Path">
+        <i class="icon ion-social-twitter"></i>
+    </a>
+    <a href="http://www.facebook.com/sharer.php?p[title]=I loved the recipe: @Model.Recipe.Name. Try it now at @Context.Request.Host@Context.Request.Path">
+        <i class="icon ion-social-facebook"></i>
+    </a>
+    <a href="http://pinterest.com/pin/create/button/?url=@Context.Request.Host@Context.Request.Path&description=I loved the recipe: @Model.Recipe.Name. Try it now">
+        <i class="icon ion-social-pinterest"></i>
+    </a>
+    <a href="#">
+        <i class="icon ion-social-instagram"></i>
+    </a><a href="#"></a>
+</div>

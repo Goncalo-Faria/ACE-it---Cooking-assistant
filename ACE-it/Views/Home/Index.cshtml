@@ -1,0 +1,12 @@
+@{
+    ViewData["Title"] = "Welcome";
+}
+
+@if (User.Identity.IsAuthenticated)
+{
+    <partial name="_Dashboard" />
+}
+else
+{
+    <partial name="_Landing" />
+}

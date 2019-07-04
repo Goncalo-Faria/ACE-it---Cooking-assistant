@@ -1,0 +1,99 @@
+@model ACE_it.Helper.RecipeSessionViewModel
+
+@{
+    ViewBag.Title = "Recipe Session";
+    Layout = "_Layout";
+
+    var text = Model.RecipeInstruction.Instruction.Text.Trim();
+    var html = text.Substring(4, text.Length - 9);
+}
+
+<div class="highlight-clean">
+    <div class="container">
+        <div class="intro">
+            @{
+                var index = Model.ViewIndex + 1;
+                <h2 class="text-center" style="margin-bottom: 50px; font-size: 250%;">Step <span id="step">@index</span></h2>
+            }
+        </div>
+        <p class="instruction text-center" style="margin-bottom: 100px; font-size: 175%;">@Html.Raw(html)</p>
+        <div class="buttons">
+            @if (Model.ViewIndex > 0)
+            {
+                var viewIndex = Model.ViewIndex - 1;
+                <a asp-action="Show" asp-controller="SessionRecipe" asp-route-sessionId="@Model.SessionId" asp-route-viewIndex="@viewIndex" class="btn btn-light" role="button">Previous STEP</a>
+            }
+
+            @if (Model.RecipeInstructionsCount - 1 == Model.InstructionIndex)
+            {
+                var label = "Finish and Rate";
+                if (Model.GoBack)
+                {
+                    label = "Return";
+                }
+                <a asp-action="Pop" asp-controller="SessionRecipe" asp-route-recipeId="@Model.RecipeId" asp-route-sessionId="@Model.SessionId" class="btn btn-primary" role="button" style="background-color: rgb(40, 167, 69);">@label</a>
+            }
+
+            @if (Model.ViewIndex == Model.InstructionIndex && Model.ViewIndex < Model.RecipeInstructionsCount - 1)
+            {
+                <a asp-action="Update" asp-controller="SessionRecipe" asp-route-sessionId="@Model.SessionId" class="btn btn-primary" role="button" style="background-color: rgb(40, 167, 69);">Next STEP</a>
+            }
+            else if (Model.ViewIndex < Model.RecipeInstructionsCount - 1)
+            {
+                var viewIndex = Model.ViewIndex + 1;
+                <a asp-action="Show" asp-controller="SessionRecipe" asp-route-sessionId="@Model.SessionId" asp-route-viewIndex="@viewIndex" class="btn btn-light" role="button">Next STEP</a>
+            }
+        </div>
+    </div>
+    <p class="text-center" style="font-size: 80%; width: 50%; margin-top: 40px; margin-bottom: 40px; margin-left: 25%;">If at any moment you need help you can consult more tips by clicking or saying the highlighted words and select the type of help you need (how, where, when, ...)<br></p>
+</div>
+<div class="steps-progressbar my-2">
+    <ul>
+        @for (var i = 0; i < Model.RecipeInstructionsCount; i++)
+        {
+            var viewI = i + 1;
+            if (i < Model.InstructionIndex)
+            {
+                <li class="previous">
+                    <a asp-action="Show" asp-controller="SessionRecipe" asp-route-sessionId="@Model.SessionId"
+                       asp-route-viewIndex="@i">
+                        @viewI</a>
+                </li>
+            }
+            else if (i == Model.InstructionIndex)
+            {
+                <li class="active">@viewI</li>
+            }
+            else
+            {
+                <li>
+                    <a asp-action="Show" asp-controller="SessionRecipe" asp-route-sessionId="@Model.SessionId"
+                       asp-route-viewIndex="@i">
+                        @viewI</a>
+                </li>
+            }
+        }
+    </ul>
+</div>
+<div id="videos" class="row" style="margin: 0 0 40px 0;">
+</div>
+
+<div id="help" class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Actions available</h5>
+            </div>
+            <div class="modal-body" style="font-size: larger;" id="body"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script src="/lib/SpeechSDK-JavaScript-1.5.0/microsoft.cognitiveservices.speech.sdk.bundle.js"></script>
+    <script src="/js/sessionRecipe/show.js"></script>
+}
